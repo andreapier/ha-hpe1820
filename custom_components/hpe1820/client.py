@@ -75,6 +75,12 @@ class Hpe1820Client:
                 f"_set_poe_state_extended | Port {config['interface']}={config['admin_mode_sel']}: {response.status}"
             )
 
+    async def get_serial_number(self):
+        async with await self._http_get("/htdocs/pages/base/dashboard.lsp") as raw_response:
+            text_response = await raw_response.text()
+            serial_number = self._parse_serial_number(text_response)
+            return serial_number
+
     async def _http_get(self, url: str):
         full_url = self._get_full_url(url)
         response = await self._session.get(full_url)
@@ -98,3 +104,11 @@ class Hpe1820Client:
         string = string.rstrip().rstrip(";")
         obj = json.loads(string)
         return [i[1:] for i in obj]
+
+    def _parse_serial_number(self, text_response):
+        search_result = regex.search(
+            '<td class="ui-widget-content fp_data_value" id="serial_number" colspan="2">(.*?)</td>',
+            text_response.replace("\n", ""),
+        )
+        serial_number = "" if search_result is None else search_result.group(1)
+        return serial_number

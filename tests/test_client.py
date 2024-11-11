@@ -4,7 +4,7 @@ from aioresponses import aioresponses
 
 from custom_components.hpe1820.client import Hpe1820Client
 
-from .data.responses import GET_POS_STATUS
+from .data.responses import GET_POS_STATUS, GET_SERIAL_NUMBER
 
 
 def test_client_constructor(session):
@@ -178,8 +178,23 @@ async def test_client_get_poe_status(session):
     client = Hpe1820Client(session, "127.0.0.1")
     with aioresponses() as mocked:
         mocked.get("http://127.0.0.1/htdocs/pages/base/poe_port_cfg.lsp", status=200, body=GET_POS_STATUS)
-        await client.get_poe_state()
+        poe_status = await client.get_poe_state()
         mocked.assert_called_once_with(
             "http://127.0.0.1/htdocs/pages/base/poe_port_cfg.lsp",
             method="GET",
         )
+        assert poe_status["1"] is True
+        assert poe_status["2"] is False
+
+
+@pytest.mark.asyncio
+async def test_client_get_serial_number(session):
+    client = Hpe1820Client(session, "127.0.0.1")
+    with aioresponses() as mocked:
+        mocked.get("http://127.0.0.1/htdocs/pages/base/dashboard.lsp", status=200, body=GET_SERIAL_NUMBER)
+        serial_number = await client.get_serial_number()
+        mocked.assert_called_once_with(
+            "http://127.0.0.1/htdocs/pages/base/dashboard.lsp",
+            method="GET",
+        )
+        assert serial_number == "TEST_SERIAL_NUMBER"

@@ -2,6 +2,7 @@ from homeassistant.components import persistent_notification
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -32,7 +33,7 @@ async def async_setup_entry(
     # Iterate through the ports of the device and create PortPoeSwitch objects
     for port_id, _ in device.ports:
         unique_id = f"{entry.entry_id}_{DOMAIN}_{port_id}"
-        ports.append(PoePortSwitch(hass, unique_id, port_id, entry, port_id.zfill(2), coordinator, device))
+        ports.append(PoePortSwitch(hass, unique_id, port_id, port_id.zfill(2), coordinator, device))
 
     async_add_entities(ports)
 
@@ -47,14 +48,13 @@ class PoePortSwitch(CoordinatorEntity, SwitchEntity):
         hass: HomeAssistant,
         unique_id: str,
         port_id: str,
-        config: ConfigEntry,
         name: str,
         coordinator: DataUpdateCoordinator,
         device: Hpe1820Device,
     ) -> None:
         """Construct."""
         super().__init__(coordinator)
-        self.entity_id = generate_entity_id(config, name)
+        self.entity_id = generate_entity_id(device.serial_number, name)
         self._name = name
         self._device = device
         self._unique_id = unique_id
@@ -80,6 +80,18 @@ class PoePortSwitch(CoordinatorEntity, SwitchEntity):
     def is_on(self) -> bool:
         """Return the switch status (on/off)."""
         return self._device.get_port_state(self._port_id)
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._device.serial_number)},
+            name="HPE1820",  # TODO: fetch from dashboard page
+            manufacturer="HPE",
+            model="HPE 1820-24G-PoE+",
+            model_id="J9983A",
+            via_device=(DOMAIN, self._device.serial_number),
+        )
 
     async def async_turn_off(self):
         """Turn the entity off."""

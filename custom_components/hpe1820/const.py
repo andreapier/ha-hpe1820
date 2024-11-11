@@ -1,6 +1,7 @@
 """Constants for Hpe1820 integration."""
 
 CONF_SYSTEM_IP = "system_ip"
+CONF_SYSTEM_SN = "system_serial_number"
 CONF_SCAN_INTERVAL = "scan_interval"
 DOMAIN = "hpe1820"
 NOTIFICATION_MESSAGE = "Toggling the switch failed. Please check the device and try again."

@@ -20,6 +20,7 @@ class Hpe1820Device:
         self._ports: Dict[str, bool] = {}
         self._config = config
         self._client = client
+        self._serial_number = None
 
     @property
     def ports(self):
@@ -36,12 +37,18 @@ class Hpe1820Device:
         _LOGGER.debug(f"ports | Ports: {self._ports.items()}")
         return self._ports.items()
 
+    @property
+    def serial_number(self):
+        """Returns the device serial_number"""
+        return self._serial_number
+
     async def update(self):
         """Updates the internal state of the device based on the latest data.
 
         This method performs the following actions:
         1. Queries for the latest port status using the client.
         2. Updates internal state for ports' status.
+        3. Fetches the serial number if it is the first time that update is running
 
         Returns:
             dict: A dictionary containing the latest retrieved port status.
@@ -57,6 +64,9 @@ class Hpe1820Device:
             ports = await self._client.get_poe_state()
             _LOGGER.debug(f"update | Succesfully fetched ports status: {ports}")
             self._ports.update(ports)
+
+            if self._serial_number is None:
+                self._serial_number = await self._client.get_serial_number()
         except ClientResponseError as err:
             _LOGGER.error(f"update | Error getting ports status: {err.message}")
             raise err

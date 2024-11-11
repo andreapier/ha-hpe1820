@@ -68,6 +68,7 @@ def device(config_entry, client):
     m_device = Hpe1820Device(config_entry, client)
 
     m_device._ports = {"1": True, "2": False}
+    m_device._serial_number = "test_serial_number"
 
     m_device.update = AsyncMock()
     m_device.update.return_value = dict(m_device._ports)
@@ -106,6 +107,7 @@ def client(mocker):
     m_client.logout = AsyncMock()
     m_client.get_poe_state = AsyncMock()
     m_client.set_poe_state = AsyncMock()
+    m_client.get_serial_number = AsyncMock()
 
     yield m_client
 
