@@ -30,7 +30,7 @@ This integration supports HPE1820. The following systems are known to work:
 
 ### Setup
 
-<img src="https://github.com/andreapier/ha-hpe1820/images/setup.png" width="400">
+<img src="https://github.com/andreapier/ha-hpe1820/blob/main/images/setup.png" width="400">
 
 - Ip: is the LAN IP of the switch.
 - Username: is your username to access the admin page via web.
@@ -41,11 +41,11 @@ This integration supports HPE1820. The following systems are known to work:
 In the option page you can configure the polling timeout. To proceed with the configuration,
 open the integration page and click on HPE1820 integration. Once the page is opened, you should see the following integration page:
 
-<img src="https://github.com/andreapier/ha-hpe1820/images/configure.png" width="400"/>
+<img src="https://github.com/andreapier/ha-hpe1820/blob/main/images/configure.png" width="400"/>
 
 To configure the integration, click on "Configure".
 
-<img src="https://github.com/andreapier/ha-hpe1820/images/options.png" width="400"/>
+<img src="https://github.com/andreapier/ha-hpe1820/blob/main/images/options.png" width="400"/>
 
 ## Troubleshooting
 
@@ -60,7 +60,7 @@ If you encounter an issue, providing `DEBUG` logs can greatly assist in identify
 7. Ensure that the logs do not contain sensitive information, as we do not log credentials or access tokens.
 8. Send the logs via a secure method. **Do not post your logs on public platforms**.
 
-<img src="https://github.com/andreapier/ha-hpe1820/images/debug.png">
+<img src="https://github.com/andreapier/ha-hpe1820/blob/main/images/debug.png">
 
 ## Contributing
 
